@@ -2,16 +2,16 @@ package org.formentor.magnolia.ai.infrastructure.openai;
 
 import org.formentor.magnolia.ai.domain.AiModel;
 import org.formentor.magnolia.ai.domain.Dataset;
-import org.formentor.magnolia.ai.domain.Example;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AiModelOpenAiImpl implements AiModel {
-    public static final String PROMPT_SEPARATOR = "->";
 
     @Override
     public CompletableFuture train(Dataset dataset) {
+        // 1. Prepare dataset
+        // 2. Upload file
+        // 3. Train model
         return CompletableFuture.completedFuture(null);
     }
 
@@ -21,12 +21,21 @@ public class AiModelOpenAiImpl implements AiModel {
     }
 
     /**
-     * SUPER IMPORTANTE
-     *
-     * - El separador de línea de .jsonl debe ser "\n" Ver https://jsonlines.org/
-     * - Al final de cada prompt hay que incluir un separador e.g "->" Ver https://beta.openai.com/docs/guides/fine-tuning/case-study-customer-support-chatbot
+     * Prepares dataset to train an OpenAI model
+     * See:
+     * - https://platform.openai.com/docs/guides/fine-tuning/preparing-your-dataset
+     * - https://platform.openai.com/docs/guides/fine-tuning/case-study-product-description-based-on-a-technical-list-of-properties
+     * @param dataset
+     * @return
      */
-    private void createJSONL(List<Example> examples) {
-
+    // TODO Remember to make this method "private", it is just "protected" during testing.
+    protected String prepareDataset(Dataset dataset) {
+        return dataset.getExamples().stream().reduce("", (acc, example) ->
+            acc.concat(
+                    new ExampleValue(example.getPrompt(), example.getCompletion()).jsonl()
+            )
+            , String::concat);
     }
+
+
 }
