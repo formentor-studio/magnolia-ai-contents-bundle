@@ -1,12 +1,14 @@
-package org.formentor.magnolia.ai.application;
+package org.formentor.magnolia.ai.training.application;
 
 import info.magnolia.context.Context;
 import info.magnolia.importexport.command.JcrImportCommand;
 import info.magnolia.repository.RepositoryManager;
 import info.magnolia.test.junit5.MagnoliaJcrTest;
 import org.apache.commons.io.FileUtils;
-import org.formentor.magnolia.ai.domain.AiModel;
-import org.formentor.magnolia.ai.domain.Dataset;
+import org.formentor.magnolia.ai.training.domain.AiModel;
+import org.formentor.magnolia.ai.training.domain.Dataset;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -18,10 +20,14 @@ import javax.jcr.Session;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @MagnoliaJcrTest
 public class AiModelTrainerTest {
@@ -46,14 +52,15 @@ public class AiModelTrainerTest {
         session.save();
 
         AiModel aiModel = mock(AiModel.class);
-        final AiModelTrainer aiModelTrainer = new AiModelTrainer(repository, aiModel);
+        when(aiModel.train(any(), any())).thenReturn(CompletableFuture.completedFuture("nonce"));
+        final AiModelTrainer aiModelTrainer = new AiModelTrainer(aiModel);
 
         // When
-        aiModelTrainer.run(ORIGIN_WORKSPACE, "/magnolia-travels", "mgnl:content", Arrays.asList("name", "location", "duration"), "body").join();
+        aiModelTrainer.run("model-name", repository.login(ORIGIN_WORKSPACE), "/magnolia-travels", "mgnl:content", Arrays.asList("name", "location", "duration"), "body").join();
 
         // Then
         ArgumentCaptor<Dataset> argumentCaptor = ArgumentCaptor.forClass(Dataset.class);
-        verify(aiModel).train(argumentCaptor.capture());
+        verify(aiModel).train(anyString(), argumentCaptor.capture());
         Dataset actual = argumentCaptor.getValue();
         assertEquals("name is Vietnam: Tradition and Today. location is Ho Chi Minh City, Vietnam. duration is 14.", actual.getExamples().get(0).getPrompt());
         assertEquals("Vietnam is one of the world's most exotic and culturally rich destinations. A gem among gems, it offers dazzling diversity for visitors.", actual.getExamples().get(0).getCompletion());

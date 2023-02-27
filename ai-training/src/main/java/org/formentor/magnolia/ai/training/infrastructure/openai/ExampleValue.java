@@ -1,4 +1,4 @@
-package org.formentor.magnolia.ai.infrastructure.openai;
+package org.formentor.magnolia.ai.training.infrastructure.openai;
 
 public class ExampleValue {
     private final PromptValue prompt;
@@ -11,7 +11,9 @@ public class ExampleValue {
 
     public String jsonl() {
         // https://platform.openai.com/docs/guides/fine-tuning/preparing-your-dataset
-        // $ openai tools fine_tunes.prepare_data -f  src/test/resources/borrar.jsonl
+        // $ openai tools fine_tunes.prepare_data -f  src/test/resources/fine-tune-example.jsonl
         return String.format("{\"prompt\":\"%s\", \"completion\": \" %s\"}\n", prompt, completion);
     }
+
+
 }

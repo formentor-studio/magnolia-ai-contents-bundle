@@ -4,12 +4,31 @@
   <name>ai-training</name>
   <displayName>${project.name}</displayName>
   <description>${project.description}</description>
-  <class>org.formentor.AiTrainingModule</class>
-  <versionHandler>org.formentor.setup.AiTrainingModuleVersionHandler</versionHandler>
+  <class>org.formentor.magnolia.ai.training.AiTrainingModule</class>
+  <versionHandler>org.formentor.magnolia.ai.training.setup.AiTrainingModuleVersionHandler</versionHandler>
   <version>${project.version}</version>
 
   <!-- For more information on module descriptor configuration options -->
   <!-- https://documentation.magnolia-cms.com/display/DOCS/XML-based+module+descriptor -->
+
+  <components>
+    <id>main</id>
+    <component>
+      <type>org.formentor.magnolia.ai.training.infrastructure.openai.TokenProvider</type>
+      <implementation>org.formentor.magnolia.ai.training.infrastructure.openai.TokenProvider</implementation>
+      <scope>singleton</scope>
+    </component>
+    <component>
+      <type>org.formentor.magnolia.ai.training.domain.AiModel</type>
+      <implementation>org.formentor.magnolia.ai.training.infrastructure.openai.AiModelOpenAI</implementation>
+      <scope>singleton</scope>
+    </component>
+    <component>
+      <type>org.formentor.magnolia.ai.training.application.AiModelTrainer</type>
+      <implementation>org.formentor.magnolia.ai.training.application.AiModelTrainer</implementation>
+      <scope>singleton</scope>
+    </component>
+  </components>
 
   <dependencies>
     <dependency>

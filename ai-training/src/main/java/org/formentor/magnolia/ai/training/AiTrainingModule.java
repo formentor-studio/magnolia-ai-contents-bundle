@@ -1,4 +1,8 @@
-package org.formentor;
+package org.formentor.magnolia.ai.training;
+
+import info.magnolia.module.ModuleLifecycleContext;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class is optional and represents the configuration for the ai-training module.
@@ -7,7 +11,19 @@ package org.formentor;
  * If you don't need this, simply remove the reference to this class in the module descriptor xml.
  * See https://documentation.magnolia-cms.com/display/DOCS/Module+configuration for information about module configuration.
  */
-public class AiTrainingModule {
-    /* you can optionally implement info.magnolia.module.ModuleLifecycle */
+@Setter
+@Getter
+public class AiTrainingModule implements info.magnolia.module.ModuleLifecycle {
+    private String host;
+    private String baseModel;
 
+    @Override
+    public void start(ModuleLifecycleContext moduleLifecycleContext) {
+
+    }
+
+    @Override
+    public void stop(ModuleLifecycleContext moduleLifecycleContext) {
+
+    }
 }

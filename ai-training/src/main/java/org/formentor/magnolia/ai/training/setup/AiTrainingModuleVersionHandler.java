@@ -1,4 +1,4 @@
-package org.formentor.setup;
+package org.formentor.magnolia.ai.training.setup;
 
 import info.magnolia.module.DefaultModuleVersionHandler;
 

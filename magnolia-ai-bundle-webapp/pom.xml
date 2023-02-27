@@ -17,7 +17,15 @@
     </dependency>
     <dependency>
       <groupId>org.formentor</groupId>
+      <artifactId>ai-training</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.formentor</groupId>
       <artifactId>demo-ai-contents-app</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>info.magnolia.demo</groupId>
+      <artifactId>magnolia-travel-tours</artifactId>
     </dependency>
     <!--
      Add your project specific dependencies here:

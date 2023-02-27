@@ -1,4 +1,4 @@
-package org.formentor.magnolia.ai.domain;
+package org.formentor.magnolia.ai.training.domain;
 
 import lombok.Data;
 
