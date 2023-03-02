@@ -1,0 +1,12 @@
+# Decorations on tours app
+# - Make property "body" to be created using AI
+subApps:
+  detail:
+    form:
+      properties:
+        body:
+          $type: textFieldAI
+          rows: 12
+          words: 300
+          performance: high
+          strategy: completion

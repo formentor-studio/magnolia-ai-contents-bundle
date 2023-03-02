@@ -57,8 +57,6 @@ public class AiModelOpenAI implements AiModel {
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     /**

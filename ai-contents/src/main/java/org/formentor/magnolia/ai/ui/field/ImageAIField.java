@@ -223,8 +223,8 @@ public class ImageAIField extends CustomField<File> {
         if(openAiUrlGenerated!=null) {
             try {
                 String uuidOfNode = valueContext.getSingleOrThrow().getUUID();
-                if (uuidOfNode != null) {
-                    String workspaceName=aiContentsModule.getWorkspaceName();
+                String workspaceName = aiContentsModule.getWorkspaceName();
+                if (uuidOfNode != null && workspaceName != null) {
                     final Session jcrSession = MgnlContext.getJCRSession(workspaceName);
                     final Node node = jcrSession.getNodeByIdentifier(uuidOfNode);
                     if (node != null) {
