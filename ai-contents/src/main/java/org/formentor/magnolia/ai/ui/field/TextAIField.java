@@ -4,6 +4,7 @@ import com.vaadin.ui.AbstractTextField;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import info.magnolia.i18nsystem.I18nizer;
 import info.magnolia.ui.UIComponent;
@@ -32,12 +33,15 @@ public class TextAIField extends CustomField<String> {
 
     private final AIContentsModule aiContentsModule;
 
-    private static final String DEFAULT_BUTTON_TEXT = "Complete text with AI";
+    private static final String DEFAULT_BUTTON_COMPLETION_LABEL = "Ask AI to write";
+    private static final String DEFAULT_BUTTON_EDIT_LABEL = "Ask AI to edit";
 
-    private static final String DEFAULT_BUTTON_EDIT_TEXT = "Fix spelling mistakes in text";
+    private static final String DEFAULT_BUTTON_FIX_TEXT = "Fix spelling mistakes in text";
+    private static final String DEFAULT_FIX_INSTRUCTION = "Fix spelling mistakes in text";
 
     private static final String DEFAULT_DIALOG_ID = "ai-contents:TextAIDialog";
-
+    private static final String DIALOG_COMPLETE_ID = "ai-contents:CompleteTextDialog";
+    private static final String DIALOG_EDIT_ID = "ai-contents:EditTextDialog";
 
     @Inject
     public TextAIField(AbstractTextField textField, TextAIFieldDefinition definition, DialogDefinitionRegistry dialogDefinitionRegistry, I18nizer i18nizer, UIComponent parentView, DialogBuilder dialogBuilder, TextAiService textAiService, AIContentsModule aiContentsModule) {
@@ -53,31 +57,64 @@ public class TextAIField extends CustomField<String> {
     @Override
     protected Component initContent() {
         VerticalLayout layout = new VerticalLayout();
-        String buttonText = DEFAULT_BUTTON_TEXT;
-        if (strategy.equals(Strategy.edit)) {
-            buttonText = aiContentsModule.getInstruction() != null ? aiContentsModule.getInstruction() : DEFAULT_BUTTON_EDIT_TEXT;
-        }
+        layout.addComponents(textField, buildActions(strategy));
 
-        Button button = new Button(buttonText);
-        addListenerOnButton(button, buttonText);
-
-
-        layout.addComponents(textField, button);
         return layout;
     }
 
-    public void addListenerOnButton(Button button, String instruction) {
-        if (strategy.equals(Strategy.edit)) {
-            button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
-                    DEFAULT_DIALOG_ID,
-                    properties -> textAiService.editText(properties.get("prompt").toString(), performance, instruction).thenAccept(textField::setValue)
-            ));
-        } else {
-            button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
-                    DEFAULT_DIALOG_ID,
-                    properties -> textAiService.completeText(properties.get("prompt").toString(), words, performance).thenAccept(textField::setValue)
-            ));
+    protected Component buildActions(Strategy forStrategy) {
+        HorizontalLayout actionsLayout = new HorizontalLayout();
+        switch (forStrategy) {
+            case completion: {
+                actionsLayout.addComponents(
+                        buildCompletionButton(DEFAULT_BUTTON_COMPLETION_LABEL),
+                        buildEditButton(DEFAULT_BUTTON_EDIT_LABEL));
+                break;
+            }
+            case edit: {
+                actionsLayout.addComponents(
+                        buildEditButton(DEFAULT_BUTTON_EDIT_LABEL));
+                break;
+            }
+            case fix: {
+                actionsLayout.addComponents(
+                        buildFixButton(DEFAULT_BUTTON_FIX_TEXT, Optional.ofNullable(aiContentsModule.getInstruction()).orElse(DEFAULT_FIX_INSTRUCTION))
+                );
+                break;
+            }
         }
+
+        return actionsLayout;
+    }
+
+    private Button buildCompletionButton(String label) {
+        Button button = new Button(label);
+        button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
+                DIALOG_COMPLETE_ID,
+                properties -> textAiService.completeText(properties.get("prompt").toString(), words, performance).thenAccept(textField::setValue)
+        ));
+
+        return button;
+    }
+
+    private Button buildEditButton(String label) {
+        Button button = new Button(label);
+        button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
+                DIALOG_EDIT_ID,
+                properties -> textAiService.editText(textField.getValue(), performance, properties.get("prompt").toString()).thenAccept(textField::setValue)
+        ));
+
+        return button;
+    }
+
+    private Button buildFixButton(String label, String instruction) {
+        Button button = new Button(label);
+        button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
+                DEFAULT_DIALOG_ID,
+                properties -> textAiService.editText(properties.get("prompt").toString(), performance, instruction).thenAccept(textField::setValue)
+        ));
+
+        return button;
     }
 
     @Override

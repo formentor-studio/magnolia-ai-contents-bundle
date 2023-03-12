@@ -1,0 +1,10 @@
+label: Tell the model how to edit the prompt
+form:
+  properties:
+    prompt:
+      $type: textField
+      label: Instruction
+      rows: 3
+actions:
+  cancel:
+    $type: closeAction

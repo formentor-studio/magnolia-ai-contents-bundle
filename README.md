@@ -1,30 +1,30 @@
 # Magnolia AI Contents
 ![open-ai-magnolila](_dev/openai-magnolia.png)
 
-This project implements a set of features in [Magnolia CMS](https://www.magnolia-cms.com/) that provides editors with [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering) skills to create contents using the AI system of [Open AI](https://openai.com/).
+This project implements a set of features in [Magnolia CMS](https://www.magnolia-cms.com/) to create contents using [prompt engineering](https://en.wikipedia.org/wiki/Prompt_engineering) with [Open AI](https://openai.com/).
 
 ## Features
-- Integration with [Open AI GPT-3](https://openai.com/blog/gpt-3-apps) and [Open AI DALL-E 2](https://openai.com/product/dall-e-2)
+- Integration with [Open AI GPT](https://openai.com/blog/gpt-3-apps) and [Open AI DALL-E](https://openai.com/product/dall-e-2)
 - UI field **textFieldAI** to create/edit text content using [Open AI GPT](https://openai.com/blog/gpt-3-apps).
 - UI field **imageAI** to create images using [OpenAI DALL-E](https://openai.com/product/dall-e-2)
-- Creation of fine-tuned models in [Open AI GPT-3](https://openai.com/blog/gpt-3-apps) for domain language defined from contents in [Magnolia CMS](https://www.magnolia-cms.com/)
+- Creation of fine-tuned models in [Open AI GPT](https://openai.com/blog/gpt-3-apps) for domain language defined from contents in [Magnolia CMS](https://www.magnolia-cms.com/)
 
 ## Modules
 ### ai-contents
-Module of Magnolia that implements the UI fields **textFieldAI** and **imageAI** to create text and multimedia contents using [Open AI](https://openai.com/).
+Provides the following UI fields to create contents using AI:
+- `textFieldAI` to write text using [Open AI](https://openai.com/)
+- `imageAI` to generate images using [Open AI](https://openai.com/).
 ### ai-training
-Module of Magnolia that creates [fine-tuned](https://platform.openai.com/docs/guides/fine-tuning) models in [Open AI](https://openai.com/) from text contents in [Magnolia CMS](https://www.magnolia-cms.com/).
+Provides a tool to train [fine-tuned](https://platform.openai.com/docs/guides/fine-tuning) models in [Open AI](https://openai.com/) from contents in [Magnolia CMS](https://www.magnolia-cms.com/).
 
 ### demo-ai-contents-app
-Content app of Magnolia with examples using the fields **textFieldAI** and **imageAI**
-
-![demo-ai-contents](_dev/blogs_app.png)
+Content app of Magnolia with examples using the fields `textFieldAI` and `imageAI`
 
 ### magnolia-ai-bundle-webapp
-Example of a bundle of Magnolia using the modules _ai-contents_ and _ai_training_
+Example of a bundle of Magnolia using the modules **ai-contents** and **ai_training**
 
 ## Setup
-1. Add dependency with the module _ai-contents_
+1. Add dependency with the module **ai-contents**
 ```xml
 <dependencies>
     <dependency>
@@ -59,6 +59,8 @@ export OPENAI_TOKEN=sk-...84jf
 > **ai-training** just requires the property _host_
 
 ## Field _textFieldAI_
+Creates text content from a given prompt and edits text for given instructions.
+
 ![textFieldAI](_dev/textfield-ai.png)
 
 Definition of field _textFieldAI_
@@ -80,23 +82,17 @@ Indicates the performance of the prediction model. Allowed values:
 - **medium**
 - **low**
 > The integration with [Open AI](https://openai.com/) maps performance with models of [Open AI](https://openai.com/), - e.g. performance **best** uses the model _"text-davinci-003"_ and **low** uses _"text-ada-001"_ -
+> 
+> When using strategy `edit` it has to be used performance `best` because `edit` is supported only by the model _"text-davinci-edit-001"_ of OpenAI
 #### strategy
 Specifies the completion strategy to add text content using OpenAI. Allowed values:
-- **completion**
-- **edit**
-> Strategy _"completion"_ means that when you enter in prompt some text it will generate you text from given prompt, and if you choose strategy _"edit"_ and enter some text in prompt it will edit the text by specified instruction specified in configuration of ai-module in Magnolia CMS (e.g Fix the spelling mistakes)
-> If you choose strategy edit you must specify performance field to be best because at this moment for strategy edit only performance **best** is supported with model _"text-davinci-edit-001"_ , but maybe in future OpenAI will support more models for this strategy
-### Example
-```yaml
-editTextAI:
-  label: Additional info about blog
-  $type: textFieldAI
-  rows: 12
-  words: 180
-  performance: best
-  strategy: edit
-```
+- `completion` to write the text from a given prompt 
+- `edit` to edit the text from given instruction
+- `fix` to fix text with given instruction "Fix spelling mistakes in text" 
+> When using strategy `edit` or `fix` it has to be used performance `best` because `edit` is supported only by the model _"text-davinci-edit-001"_ of OpenAI
+
 ## Field _imageAI_
+Creates image content from a given prompt.
 
 ![textFieldAI](_dev/image-ai-field.png)
 
@@ -108,8 +104,6 @@ imageAI:
   promptProperty: summary
 ```
 ### Field properties
-#### promptProperty  
-Specifies the name of the field that will be used as prompt to create the image using AI.
 
 ### Example
 ```yaml
@@ -118,10 +112,6 @@ subApps:
     label: Blog
     form:
       properties:
-        summary:
-          $type: richTextField
-          label: Summary
-          height: 200
         imageAI:
           $type: compositeField
           label: Image AI
@@ -133,10 +123,9 @@ subApps:
             image:
               label: ""
               $type: imageAI
-              promptProperty: summary # The value of property "summary" will be used to create the image
 ```
 
-## Creation of fine-tuned models in OpenAI GPT
+## Training fine-tuned models in OpenAI GPT
 The module _ai-training_ provides the command `ModelTrainerCommand` to create fine-tuned models in [Open AI GPT-3](https://openai.com/blog/gpt-3-apps)
 
 Input parameters of `ModelTrainerCommand`

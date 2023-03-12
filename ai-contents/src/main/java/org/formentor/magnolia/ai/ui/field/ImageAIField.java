@@ -15,12 +15,16 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import info.magnolia.context.MgnlContext;
+import info.magnolia.i18nsystem.I18nizer;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.icons.MagnoliaIcons;
+import info.magnolia.ui.UIComponent;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.message.Message;
 import info.magnolia.ui.api.message.MessageType;
 import info.magnolia.ui.datasource.jcr.JcrNodeWrapper;
+import info.magnolia.ui.dialog.DialogBuilder;
+import info.magnolia.ui.dialog.DialogDefinitionRegistry;
 import info.magnolia.ui.framework.message.MessagesManager;
 import info.magnolia.ui.framework.util.TempFilesManager;
 import info.magnolia.ui.theme.ResurfaceTheme;
@@ -33,6 +37,7 @@ import org.formentor.magnolia.ai.AIContentsModule;
 import org.formentor.magnolia.ai.domain.ImageAiService;
 import org.formentor.magnolia.ai.domain.ImageFormat;
 import org.formentor.magnolia.ai.domain.ImageSize;
+import org.formentor.magnolia.ai.ui.dialog.DialogCallback;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
@@ -55,8 +60,9 @@ import java.util.concurrent.CompletableFuture;
 public class ImageAIField extends CustomField<File> {
     private static final Resource DEFAULT_REVIEW_IMG = MagnoliaIcons.FILE;
     private static final Tika TIKA = new Tika();
-
     private static final String OPENAI_GENERATED_URL="openAI_generated_url";
+    private static final String DIALOG_ID = "ai-contents:GenerateImageDialog";
+    private static final String DEFAULT_BUTTON_CREATE_LABEL = "Ask AI to create";
 
     private final TempFilesManager tempFilesManager;
     private final String promptProperty;
@@ -70,13 +76,14 @@ public class ImageAIField extends CustomField<File> {
     private Button removeUploadBtn;
     private Button downloadBtn;
     private Image thumbnail;
+    private final DialogCallback dialogCallback;
 
     private final AIContentsModule aiContentsModule;
 
     private final ValueContext<JcrNodeWrapper> valueContext;
 
     @Inject
-    public ImageAIField(TempFilesManager tempFilesManager, ImageAIFieldDefinition definition, SimpleTranslator translator, MessagesManager messagesManager, ImageAiService imageAIService, AIContentsModule aiContentsModule, ValueContext<JcrNodeWrapper> valueContext) {
+    public ImageAIField(TempFilesManager tempFilesManager, ImageAIFieldDefinition definition, SimpleTranslator translator, MessagesManager messagesManager, ImageAiService imageAIService, AIContentsModule aiContentsModule, ValueContext<JcrNodeWrapper> valueContext, DialogDefinitionRegistry dialogDefinitionRegistry, I18nizer i18nizer, UIComponent parentView, DialogBuilder dialogBuilder) {
         this.tempFilesManager = tempFilesManager;
         this.promptProperty = definition.getPromptProperty();
         this.translator = translator;
@@ -84,6 +91,7 @@ public class ImageAIField extends CustomField<File> {
         this.imageAIService = imageAIService;
         this.aiContentsModule = aiContentsModule;
         this.valueContext = valueContext;
+        this.dialogCallback = new DialogCallback(dialogDefinitionRegistry, i18nizer, parentView, dialogBuilder); // TODO try to inject DialogCallback
     }
 
     @Override
@@ -99,6 +107,61 @@ public class ImageAIField extends CustomField<File> {
 
     @Override
     protected Component initContent() {
+        // Create body layout
+        VerticalLayout rootLayout = new VerticalLayout();
+        rootLayout.setSizeFull();
+        rootLayout.setMargin(false);
+        rootLayout.setSpacing(true);
+
+        // Container for the image
+        thumbnail = new Image(StringUtils.EMPTY, DEFAULT_REVIEW_IMG);
+        thumbnail.addStyleName("file-preview-thumbnail");
+        imageContainer = buildImageContainer(thumbnail);
+
+        HorizontalLayout rootUploadPanel = buildRootUploadPanel();
+        rootUploadPanel.addComponents(imageContainer);
+        rootLayout.addComponents(rootUploadPanel);
+
+        updateControlVisibilities();
+
+        return rootLayout;
+    }
+
+    private CssLayout buildImageContainer(Image thumbnail) {
+        CssLayout imageContainer = commonUploadPanel();
+        imageContainer.addComponents(buildControlButtonPanel(), thumbnail, buildCreateButton());
+
+        return imageContainer;
+    }
+
+    private Button buildCreateButton() {
+        Button button = new Button(DEFAULT_BUTTON_CREATE_LABEL);
+        button.addStyleName("upload-button");
+        button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
+                DIALOG_ID,
+                properties -> {
+                    final String promptForImage = properties.get("prompt").toString();
+                    try {
+                        currentTempFile = createImageAI(promptForImage).get().orElse(null); // TODO set currentTempFile Optional
+                        updateControlVisibilities();
+                        fireEvent(createValueChange(null, false));
+                        Notification.show("Image created successfully");
+                    } catch (Exception e) {
+                        Notification.show("Errors creating AI image: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
+                    }
+                    return CompletableFuture.completedFuture("");
+                }
+        ));
+
+        return button;
+    }
+
+    /**
+     * Builds the layout when the source of the "prompt" is a property of the current node.
+     * @return
+     */
+    @Deprecated
+    private Component buildLayoutForPromptFromProperty() {
         Optional<String> imagePrompt = getPropertyValueFromContext(valueContext, promptProperty);
         // Create body layout
         VerticalLayout rootLayout = new VerticalLayout();
@@ -128,6 +191,8 @@ public class ImageAIField extends CustomField<File> {
         return rootLayout;
     }
 
+    // Deprecated as using a property as "prompt" is deprecated
+    @Deprecated
     private Optional<String> getPropertyValueFromContext(ValueContext<JcrNodeWrapper> context, String propertyName) {
         return context.getSingle().flatMap(item -> {
             try {
@@ -141,6 +206,8 @@ public class ImageAIField extends CustomField<File> {
         });
     }
 
+    // Deprecated as using a property as "prompt" is deprecated
+    @Deprecated
     private CssLayout buildImageContainer(Image thumbnail, Optional<String> imagePrompt) {
         CssLayout imageContainer = commonUploadPanel();
         imageContainer.addComponents(buildControlButtonPanel(), thumbnail, buildButtonCreateAI(imagePrompt));
@@ -148,6 +215,8 @@ public class ImageAIField extends CustomField<File> {
         return imageContainer;
     }
 
+    // Deprecated as using a property as "prompt" is deprecated
+    @Deprecated
     private Button buildButtonCreateAI(Optional<String> imagePrompt) {
         Button btn = new Button("Create image AI");
         btn.addStyleName("upload-button");

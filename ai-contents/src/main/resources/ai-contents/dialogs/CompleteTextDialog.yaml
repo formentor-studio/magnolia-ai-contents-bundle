@@ -1,0 +1,10 @@
+label: Specify the description of the desired text
+form:
+  properties:
+    prompt:
+      $type: textField
+      label: Prompt
+      rows: 3
+actions:
+  cancel:
+    $type: closeAction

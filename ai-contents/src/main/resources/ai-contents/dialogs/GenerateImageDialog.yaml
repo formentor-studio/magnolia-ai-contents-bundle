@@ -1,0 +1,10 @@
+label: Specify the text description of the desired image
+form:
+  properties:
+    prompt:
+      $type: textField
+      label: Description
+      rows: 3
+actions:
+  cancel:
+    $type: closeAction
