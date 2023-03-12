@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mgnlauthor:
+    image: magnolia-ai-bundle
+    build:
+      context: ./
+      args:
+        MGNL_WAR_PATH: "magnolia-ai-bundle-webapp/target/ROOT.war"
+    environment:
+      OPENAI_TOKEN: ${OPENAI_TOKEN:?OPENAI_TOKEN must be set!}
+    volumes:
+      - mgnl-author:/opt/magnolia/data
+#      - ../light-modules:/opt/magnolia/light-modules
+    ports:
+      - "80:8080"
+
+volumes:
+  mgnl-author:
+
+
+
+
+
