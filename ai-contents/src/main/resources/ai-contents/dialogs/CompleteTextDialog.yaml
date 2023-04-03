@@ -2,9 +2,32 @@ label: Specify the description of the desired text
 form:
   properties:
     prompt:
-      $type: textField
       label: Prompt
+      $type: textField
       rows: 3
+    performance:
+      label: Performance
+      $type: comboBoxField
+      defaultValue: best
+      datasource:
+        $type: optionListDatasource
+        options:
+          - name: low
+            label: Low
+            value: low
+          - name: medium
+            label: Medium
+            value: medium
+          - name: high
+            label: High
+            value: high
+          - name: best
+            label: Best
+            value: best
+    words:
+      label: Words
+      $type: textField
+      defaultValue: "180"
 actions:
   cancel:
     $type: closeAction

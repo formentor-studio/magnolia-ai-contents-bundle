@@ -141,8 +141,9 @@ public class ImageAIField extends CustomField<File> {
                 DIALOG_ID,
                 properties -> {
                     final String promptForImage = properties.get("prompt").toString();
+                    final String sizeOfImage = properties.get("size").toString();
                     try {
-                        currentTempFile = createImageAI(promptForImage).get().orElse(null); // TODO set currentTempFile Optional
+                        currentTempFile = createImageAI(promptForImage, ImageSize.valueOf(sizeOfImage)).get().orElse(null); // TODO set currentTempFile Optional
                         updateControlVisibilities();
                         fireEvent(createValueChange(null, false));
                         Notification.show("Image created successfully");
@@ -227,7 +228,7 @@ public class ImageAIField extends CustomField<File> {
                 return;
             }
             try {
-                currentTempFile = createImageAI(imagePrompt.get()).get().orElse(null); // TODO set currentTempFile Optional
+                currentTempFile = createImageAI(imagePrompt.get(), ImageSize.Size512).get().orElse(null); // TODO set currentTempFile Optional
                 updateControlVisibilities();
                 fireEvent(createValueChange(null, false));
                 Notification.show("Image created successfully");
@@ -238,9 +239,9 @@ public class ImageAIField extends CustomField<File> {
         return btn;
     }
 
-    private CompletableFuture<Optional<File>> createImageAI(String rawPrompt) {
+    private CompletableFuture<Optional<File>> createImageAI(String rawPrompt, ImageSize size) {
         String prompt = Jsoup.clean(rawPrompt, Safelist.none());
-        return imageAIService.generateImage(prompt, 1, ImageSize.Size512, ImageFormat.url)
+        return imageAIService.generateImage(prompt, 1, size, ImageFormat.url)
                 .thenApply(imageUrl -> {
                     if (imageUrl == null || imageUrl.isEmpty()) {
                         log.warn("Image not created");

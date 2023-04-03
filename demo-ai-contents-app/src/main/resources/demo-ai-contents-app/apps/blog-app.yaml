@@ -1,5 +1,5 @@
 !content-type:blog
-name: blog-app
+name: Blog
 icon: icon-content-app
 subApps:
   detail:

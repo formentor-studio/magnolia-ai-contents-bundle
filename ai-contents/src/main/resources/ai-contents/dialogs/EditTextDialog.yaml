@@ -1,4 +1,4 @@
-label: Tell the model how to edit the prompt
+label: Tell the model how to edit the text
 form:
   properties:
     prompt:

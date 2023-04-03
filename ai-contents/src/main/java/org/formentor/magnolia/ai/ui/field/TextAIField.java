@@ -91,7 +91,11 @@ public class TextAIField extends CustomField<String> {
         Button button = new Button(label);
         button.addClickListener((Button.ClickListener) event -> dialogCallback.open(
                 DIALOG_COMPLETE_ID,
-                properties -> textAiService.completeText(properties.get("prompt").toString(), words, performance).thenAccept(textField::setValue)
+                properties -> textAiService.completeText(
+                        properties.get("prompt").toString(),
+                        Optional.ofNullable(Integer.valueOf(properties.get("words").toString())).orElse(words),
+                        properties.containsKey("performance")? getTextPerformance(properties.get("performance").toString()): performance
+                ).thenAccept(textField::setValue)
         ));
 
         return button;
