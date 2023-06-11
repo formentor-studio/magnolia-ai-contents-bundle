@@ -15,8 +15,12 @@ import lombok.Setter;
 @Getter
 public class AIContentsModule implements info.magnolia.module.ModuleLifecycle{
     /* you can optionally implement info.magnolia.module.ModuleLifecycle */
-    private String host;
+    private OpenAI openAI;
+    private Azure azure;
+
+    @Deprecated
     private String instruction;
+    @Deprecated
     private String workspaceName;
 
     @Override
@@ -27,5 +31,20 @@ public class AIContentsModule implements info.magnolia.module.ModuleLifecycle{
     @Override
     public void stop(ModuleLifecycleContext moduleLifecycleContext) {
 
+    }
+
+    @Getter
+    @Setter
+    public static class OpenAI {
+        private String host;
+    }
+
+    @Getter
+    @Setter
+    public static class Azure {
+        private String host;
+        private String resource;
+        private String deployment;
+        private String apiVersion;
     }
 }

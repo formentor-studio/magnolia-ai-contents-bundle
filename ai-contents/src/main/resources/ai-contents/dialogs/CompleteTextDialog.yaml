@@ -27,7 +27,7 @@ form:
     words:
       label: Words
       $type: textField
-      defaultValue: "180"
+      defaultValue: "4096"
 actions:
   cancel:
     $type: closeAction
