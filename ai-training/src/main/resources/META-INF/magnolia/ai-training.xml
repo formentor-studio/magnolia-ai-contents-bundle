@@ -14,13 +14,13 @@
   <components>
     <id>main</id>
     <component>
-      <type>org.formentor.magnolia.ai.training.infrastructure.openai.TokenProvider</type>
-      <implementation>org.formentor.magnolia.ai.training.infrastructure.openai.TokenProvider</implementation>
+      <type>org.formentor.magnolia.ai.training.infrastructure.azure.AzureApiKeyProvider</type>
+      <implementation>org.formentor.magnolia.ai.training.infrastructure.azure.AzureApiKeyProvider</implementation>
       <scope>singleton</scope>
     </component>
     <component>
       <type>org.formentor.magnolia.ai.training.domain.AiModel</type>
-      <implementation>org.formentor.magnolia.ai.training.infrastructure.openai.AiModelOpenAI</implementation>
+      <implementation>org.formentor.magnolia.ai.training.infrastructure.azure.AiModelAzure</implementation>
       <scope>singleton</scope>
     </component>
     <component>

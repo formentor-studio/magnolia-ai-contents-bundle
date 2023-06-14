@@ -57,7 +57,7 @@ public class AzureOpenAiApi {
             int code = response.code();
             String responseBody = response.body().string();
             if (code != 201) {
-                throw new RuntimeException(String.format("%s - %s", code, body));
+                throw new RuntimeException(String.format("%s - %s", code, responseBody));
             }
 
             return CompletableFuture.completedFuture(mapper.readValue(responseBody, FineTuneResult.class));
@@ -79,7 +79,7 @@ public class AzureOpenAiApi {
 
     private Request.Builder requestBuilder(String resource) {
         return new Request.Builder()
-                .url(host + resource + "?api-version=" + apiVersion)
+                .url(host + "/openai" + resource + "?api-version=" + apiVersion)
                 .header("api-key", apiKey);
     }
 }

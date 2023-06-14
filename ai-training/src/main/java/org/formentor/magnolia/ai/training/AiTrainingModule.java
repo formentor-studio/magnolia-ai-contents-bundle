@@ -16,6 +16,7 @@ import lombok.Setter;
 public class AiTrainingModule implements info.magnolia.module.ModuleLifecycle {
     private String host;
     private String baseModel;
+    private Azure azure;
 
     @Override
     public void start(ModuleLifecycleContext moduleLifecycleContext) {
@@ -26,4 +27,13 @@ public class AiTrainingModule implements info.magnolia.module.ModuleLifecycle {
     public void stop(ModuleLifecycleContext moduleLifecycleContext) {
 
     }
+
+    @Getter
+    @Setter
+    public static class Azure {
+        private String host;
+        private String apiVersion;
+        private String baseModel;
+    }
+
 }
