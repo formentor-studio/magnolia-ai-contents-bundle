@@ -1,5 +1,6 @@
 package org.formentor.magnolia.ai.infrastructure.azure;
 
+import org.apache.commons.lang3.StringUtils;
 import org.formentor.magnolia.ai.AIContentsModule;
 import org.formentor.magnolia.ai.domain.TextAiService;
 import org.formentor.magnolia.ai.domain.TextPerformance;
@@ -36,7 +37,8 @@ public class TextAiServiceAzure implements TextAiService {
                 .build();
 
         return CompletableFuture.supplyAsync(() -> api.createCompletion(apiVersion, request))
-                .thenApply(completionResult -> completionResult.getChoices().get(0).getText());
+                .thenApply(completionResult -> completionResult.getChoices().get(0).getText())
+                .thenApply(text -> StringUtils.normalizeSpace(text));
     }
 
     @Override
@@ -66,6 +68,6 @@ public class TextAiServiceAzure implements TextAiService {
          * 1,500 words ~= 2048 tokens
          */
 
-        return (int)(prompt.length()/4 * 1.15);  // Add 15% for security
+        return (int)(prompt.length()/4 * 1.45);  // Add 45% for security
     }
 }
