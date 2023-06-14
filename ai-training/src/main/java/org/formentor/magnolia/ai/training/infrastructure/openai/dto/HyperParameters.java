@@ -16,6 +16,11 @@ public class HyperParameters {
     String batch_size;
 
     /**
+     * The value indicating whether to compute classification metrics
+     */
+    Boolean compute_classification_metrics;
+
+    /**
      * The learning rate multiplier to use for training.
      */
     Double learning_rate_multiplier;
