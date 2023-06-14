@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class TextAiServiceAzure implements TextAiService {
 
+    private final int AZURE_OPENAI_MAX_TOKENS = 4096;
     private final String apiVersion;
     private final AzureOpenAiApi api;
 
@@ -40,6 +41,31 @@ public class TextAiServiceAzure implements TextAiService {
 
     @Override
     public CompletableFuture<String> editText(String prompt, TextPerformance performance, String instruction) {
-        throw new RuntimeException("Unsupported operation (editText)");
+        /*
+        Translate the following from slang to a business letter:
+        'Dude, This is Joe, check out this spec on this standing lamp.'
+         */
+        String promptWithInstruction = String.format("%s:\n%s", instruction, prompt);
+
+        return completeText(
+                promptWithInstruction,
+                AZURE_OPENAI_MAX_TOKENS - estimateTokensCount(promptWithInstruction),
+                performance);
+    }
+
+    private int estimateTokensCount(String prompt) {
+        /**
+         * At 2023-06-14 based on https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+         *
+         * 1 token ~= 4 chars in English
+         * 1 token ~= ¾ words
+         * 100 tokens ~= 75 words
+         * Or
+         * 1-2 sentence ~= 30 tokens
+         * 1 paragraph ~= 100 tokens
+         * 1,500 words ~= 2048 tokens
+         */
+
+        return (int)(prompt.length()/4 * 1.15);  // Add 15% for security
     }
 }
