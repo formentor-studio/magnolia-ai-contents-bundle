@@ -7,8 +7,7 @@ import info.magnolia.test.junit5.MagnoliaJcrTest;
 import org.apache.commons.io.FileUtils;
 import org.formentor.magnolia.ai.training.domain.AiModel;
 import org.formentor.magnolia.ai.training.domain.Dataset;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
+import org.formentor.magnolia.ai.training.domain.PropertyPromptValueMother;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -36,10 +35,12 @@ public class AiModelTrainerTest {
     void shouldTrainModel(RepositoryManager repositoryManager) throws RepositoryException {
         final String ORIGIN_REPOSITORY = "magnolia";
         final String ORIGIN_WORKSPACE = "tours";
-
         // Given
         repositoryManager.createWorkspace(ORIGIN_REPOSITORY, ORIGIN_WORKSPACE);
         Repository repository = repositoryManager.getRepository(ORIGIN_REPOSITORY);
+
+
+
         Session session = repositoryManager.getRepository(ORIGIN_REPOSITORY).login(ORIGIN_WORKSPACE);
         // TODO Apply Object Mother pattern to create example of source data  https://martinfowler.com/bliki/ObjectMother.html
         Node content = session.getRootNode()
@@ -56,7 +57,7 @@ public class AiModelTrainerTest {
         final AiModelTrainer aiModelTrainer = new AiModelTrainer(aiModel);
 
         // When
-        aiModelTrainer.run("model-name", repository.login(ORIGIN_WORKSPACE), "/magnolia-travels", "mgnl:content", Arrays.asList("name", "location", "duration"), "body").join();
+        aiModelTrainer.run("model-name", repository.login(ORIGIN_WORKSPACE), "/magnolia-travels", "mgnl:content", Arrays.asList(PropertyPromptValueMother.fromName("name"), PropertyPromptValueMother.fromName("location"), PropertyPromptValueMother.fromName("duration")), "body").join();
 
         // Then
         ArgumentCaptor<Dataset> argumentCaptor = ArgumentCaptor.forClass(Dataset.class);
