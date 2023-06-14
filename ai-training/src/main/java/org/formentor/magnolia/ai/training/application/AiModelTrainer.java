@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class AiModelTrainer {
@@ -79,36 +80,62 @@ public class AiModelTrainer {
     }
 
     private Optional<String> getPropertyPromptString(Node node, PropertyPromptValue propertyPrompt) {
-        Optional<String> propertyValueString = getPropertyString(node, propertyPrompt.getPropertyName());
-        if (!propertyValueString.isPresent()) {
+        Optional<Object> propertyValueObject = getPropertyValueObject(node, propertyPrompt.getPropertyName());
+        if (!propertyValueObject.isPresent()) {
             return Optional.empty();
         }
 
-        if (propertyPrompt.isReference()) {
-            final String referenceNodeId = propertyValueString.get();
-            final String referenceWorkspace = propertyPrompt.getReference().getTargetWorkspace();
-            final String referencePropertyName = propertyPrompt.getReference().getTargetPropertyName();
-            try {
-                Session session = MgnlContext.getJCRSession(referenceWorkspace);
-                Node referenceNode = session.getNodeByIdentifier(referenceNodeId);
-                return getPropertyString(referenceNode, referencePropertyName);
-            } catch (ItemNotFoundException e) {
-                log.error("Can't find referenced node '{}' in workspace '{}' when building training example of {}", referenceNodeId, referenceWorkspace, node, e);
-                return Optional.empty();
-            } catch (RepositoryException e) {
-                log.error("Errors reading property '{}' of the referenced node {} in workspace '{}' when building training example of {}", referencePropertyName, referenceNodeId, referenceWorkspace, node, e);
-                return Optional.empty();
+        if (!isMultiple(propertyValueObject.get())) {
+            String propertyValueString = propertyValueObject.get().toString();
+            return (propertyPrompt.isReference())
+                ? getReferencedNodePropertyString(propertyPrompt.getReference().getTargetWorkspace(), propertyValueString, propertyPrompt.getReference().getTargetPropertyName(), node)
+                : Optional.of(propertyValueString);
+        } else {
+            List<String> propertyValueList = (List<String>)propertyValueObject.get();
+            int limit = Optional.ofNullable(propertyPrompt.getLimit()).orElse(propertyValueList.size());
+            if (!propertyPrompt.isReference()) {
+                return Optional.ofNullable(String.join(", ", propertyValueList.subList(0, Math.min(limit, propertyValueList.size()))));
+            } else {
+                String referenceWorkspace = propertyPrompt.getReference().getTargetWorkspace();
+                String referencePropertyName = propertyPrompt.getReference().getTargetPropertyName();
+                List<String> propertyValuesPopulatedWithReference = propertyValueList.stream()
+                        .map(referenceNodeId -> getReferencedNodePropertyString(referenceWorkspace, referenceNodeId, referencePropertyName, node))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+
+                return Optional.ofNullable(String.join(", ", propertyValuesPopulatedWithReference.subList(0, Math.min(limit, propertyValuesPopulatedWithReference.size()))));
             }
         }
-
-        return propertyValueString;
     }
 
     private Optional<String> getPropertyString(Node node, String propertyName) {
         return Optional.ofNullable(PropertyUtil.getString(node, propertyName)); // Using a decorator of PropertyUtil.getString() because I prefer working with "Optional" instead of "null"
     }
 
+    private Optional<Object> getPropertyValueObject(Node node, String propertyName) {
+        return Optional.ofNullable(PropertyUtil.getPropertyValueObject(node, propertyName)); // Using a decorator of PropertyUtil.getString() because I prefer working with "Optional" instead of "null"
+    }
+
+    private Optional<String> getReferencedNodePropertyString(String referenceWorkspace, String referenceNodeId, String referencePropertyName, Node sourceNode) {
+        try {
+            Session session = MgnlContext.getJCRSession(referenceWorkspace);
+            Node referenceNode = session.getNodeByIdentifier(referenceNodeId);
+            return getPropertyString(referenceNode, referencePropertyName);
+        } catch (ItemNotFoundException e) {
+            log.error("Can't find referenced node '{}' in workspace '{}' when building training example of {}", referenceNodeId, referenceWorkspace, sourceNode, e);
+            return Optional.empty();
+        } catch (RepositoryException e) {
+            log.error("Errors reading property '{}' of the referenced node {} in workspace '{}' when building training example of {}", referencePropertyName, referenceNodeId, referenceWorkspace, sourceNode, e);
+            return Optional.empty();
+        }
+    }
+    private boolean isMultiple(Object propertyValue) {
+        return propertyValue instanceof List;
+    }
+
     private String cleanHtml(String rawText) {
         return Jsoup.clean(rawText, Safelist.none());
     }
+
 }
