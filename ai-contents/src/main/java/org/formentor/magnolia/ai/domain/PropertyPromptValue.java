@@ -1,16 +1,16 @@
-package org.formentor.magnolia.ai.ui.field;
+package org.formentor.magnolia.ai.domain;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TextAIFieldPromptDefinition {
-    public TextAIFieldPromptDefinition() {
+public class PropertyPromptValue {
+    public PropertyPromptValue() {
 
     }
 
-    private String propertyName;
+    private String name;
     private Integer limit;
     private String targetWorkspace;
     private String targetPropertyName;

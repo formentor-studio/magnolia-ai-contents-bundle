@@ -1,12 +1,12 @@
-label: Specify the text description of the desired image
+# label: Specify the text description of the desired image
 form:
   properties:
     prompt:
-      label: Description
+#      label: Description
       $type: textField
       rows: 3
     size:
-      label: Size
+#      label: Size
       $type: comboBoxField
       defaultValue: Size512
       datasource:

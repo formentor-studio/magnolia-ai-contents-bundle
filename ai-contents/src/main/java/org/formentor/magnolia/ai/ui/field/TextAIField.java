@@ -25,6 +25,7 @@ import info.magnolia.ui.editor.LocaleContext;
 import info.magnolia.ui.framework.app.BaseSubApp;
 import lombok.extern.slf4j.Slf4j;
 import org.formentor.magnolia.ai.domain.Strategy;
+import org.formentor.magnolia.ai.domain.PropertyPromptValue;
 import org.formentor.magnolia.ai.domain.TextAiService;
 import org.formentor.magnolia.ai.domain.TextPerformance;
 import org.formentor.magnolia.ai.ui.dialog.DialogCallback;
@@ -184,22 +185,23 @@ public class TextAIField extends CustomField<String> {
      * @return
      */
     private String derivePromptFromDefinitionAndValueContext(TextAIFieldDefinition definition, ValueContext<JcrNodeWrapper> context) {
-        if (definition.getPrompt() == null) {
+        final PromptGeneratorDefinition promptGenerator = definition.getPromptGenerator();
+        if (promptGenerator == null) {
             return "";
         }
 
         String prompt = context.getSingle()
                 .map(I18nNodeWrapper::new)
-                .map(item -> definition.getPrompt()
+                .map(item -> promptGenerator.getProperties()
                     .stream()
-                    .reduce("", (acc, promptDefinition) -> {
-                        Optional<String> propertyPromptValue = getPropertyPromptValue(item, promptDefinition);
-                        return propertyPromptValue.map(propertyValue -> acc.concat(String.format("%s: %s.\n", getPropertyPromptLabel(promptDefinition.getPropertyName()), propertyValue))).orElse(acc);
+                    .reduce("", (acc, propertyDefinition) -> {
+                        Optional<String> propertyPromptValue = getPropertyPromptValue(item, propertyDefinition);
+                        return propertyPromptValue.map(propertyValue -> acc.concat(String.format("%s: %s.\n", getPropertyPromptLabel(propertyDefinition.getName()), propertyValue))).orElse(acc);
                     }, String::concat))
                 .orElse("");
 
-        if (definition.getTemplate() != null) {
-            return  i18n.translate(definition.getTemplate(), prompt, localeContext.getCurrent().getDisplayName());
+        if (promptGenerator.getTemplate() != null) {
+            return  i18n.translate(promptGenerator.getTemplate(), prompt, localeContext.getCurrent().getDisplayName());
         }
 
         return prompt;
@@ -214,8 +216,8 @@ public class TextAIField extends CustomField<String> {
         return label;
     }
 
-    private Optional<String> getPropertyPromptValue(Node node, TextAIFieldPromptDefinition promptDefinition) {
-        Optional<Object> propertyValueObject = getPropertyValueObject(node, promptDefinition.getPropertyName());
+    private Optional<String> getPropertyPromptValue(Node node, PropertyPromptValue promptDefinition) {
+        Optional<Object> propertyValueObject = getPropertyValueObject(node, promptDefinition.getName());
         if (!propertyValueObject.isPresent()) {
             return Optional.empty();
         }
@@ -288,18 +290,19 @@ public class TextAIField extends CustomField<String> {
      */
     private String derivePromptFromDefinitionAndFormView(TextAIFieldDefinition definition, FormView form) {
         // i18n.translate("ai.prompt.template.rooms", ((FormView)parentView.accessViewBeanStore().getInstance(EditorView.class).get()).getPropertyValue("name"));
-        if (definition.getPrompt() == null) {
+        final PromptGeneratorDefinition promptGenerator = definition.getPromptGenerator();
+        if (promptGenerator == null) {
             return "";
         }
-        String prompt = definition.getPrompt().stream()
-                .reduce("", (acc, promptDefinition) -> {
-                            Optional<String> propertyPromptValue = form.getPropertyValue(promptDefinition.getPropertyName());
-                            return propertyPromptValue.map(value -> acc.concat(String.format("%s is %s. ", promptDefinition.getPropertyName(), value))).orElse(acc);
+        String prompt = promptGenerator.getProperties().stream()
+                .reduce("", (acc, propertyDefinition) -> {
+                            Optional<String> propertyPromptValue = form.getPropertyValue(propertyDefinition.getName());
+                            return propertyPromptValue.map(value -> acc.concat(String.format("%s is %s. ", propertyDefinition.getName(), value))).orElse(acc);
                         },
                         String::concat)
                 .trim();
-        if (definition.getTemplate() != null) {
-            return  i18n.translate(definition.getTemplate(), prompt);
+        if (promptGenerator.getTemplate() != null) {
+            return  i18n.translate(promptGenerator.getTemplate(), prompt);
         }
 
         return prompt;
