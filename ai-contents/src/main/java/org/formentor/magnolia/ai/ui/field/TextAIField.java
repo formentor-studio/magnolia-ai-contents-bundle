@@ -16,13 +16,13 @@ import info.magnolia.jcr.util.PropertyUtil;
 import info.magnolia.jcr.wrapper.I18nNodeWrapper;
 import info.magnolia.ui.UIComponent;
 import info.magnolia.ui.ValueContext;
+import info.magnolia.ui.api.app.AppContext;
 import info.magnolia.ui.datasource.jcr.JcrNodeWrapper;
 import info.magnolia.ui.dialog.DialogBuilder;
 import info.magnolia.ui.dialog.DialogDefinitionRegistry;
 import info.magnolia.ui.editor.EditorView;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.editor.LocaleContext;
-import info.magnolia.ui.framework.app.BaseSubApp;
 import lombok.extern.slf4j.Slf4j;
 import org.formentor.magnolia.ai.domain.Strategy;
 import org.formentor.magnolia.ai.domain.PropertyPromptValue;
@@ -67,8 +67,8 @@ public class TextAIField extends CustomField<String> {
     private static final String DIALOG_EDIT_ID = "ai-contents:EditTextDialog";
 
     @Inject
-    public TextAIField(TranslationService translationService, LocaleContext localeContext, I18nContentSupport i18nContentSupport, AbstractTextField textField, TextAIFieldDefinition definition, DialogDefinitionRegistry dialogDefinitionRegistry, I18nizer i18nizer, DialogBuilder dialogBuilder, TextAiService textAiService, SimpleTranslator i18n, ValueContext<JcrNodeWrapper> valueContext, UIComponent parentView) {
-        this.appName = ((BaseSubApp) parentView).getAppContext().getName();
+    public TextAIField(AppContext appContext, TranslationService translationService, LocaleContext localeContext, I18nContentSupport i18nContentSupport, AbstractTextField textField, TextAIFieldDefinition definition, DialogDefinitionRegistry dialogDefinitionRegistry, I18nizer i18nizer, DialogBuilder dialogBuilder, TextAiService textAiService, SimpleTranslator i18n, ValueContext<JcrNodeWrapper> valueContext, UIComponent parentView) {
+        this.appName = appContext.getName();
         this.localeContext = localeContext;
         this.fallbackLocale = i18nContentSupport.getFallbackLocale();
         this.definition = definition;

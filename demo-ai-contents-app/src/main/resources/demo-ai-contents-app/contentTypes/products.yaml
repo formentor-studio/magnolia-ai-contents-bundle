@@ -1,0 +1,16 @@
+datasource:
+  workspace: products
+  rootPath: /
+  namespaces:
+    lib: https://www.magnolia-travel.com/jcr/1.0/lib
+  autoCreate: true
+
+model:
+  nodeType: lib:products
+  properties:
+    - name: title
+      i18n: true
+    - name: overview
+      i18n: true
+    - name: materials
+      multiple: true
