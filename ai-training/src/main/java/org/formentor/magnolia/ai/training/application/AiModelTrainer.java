@@ -80,6 +80,7 @@ public class AiModelTrainer {
     }
 
     private Optional<String> getPropertyPromptString(Node node, PropertyPromptValue propertyPrompt) {
+//        determinePropertyNameByLanguage();
         Optional<Object> propertyValueObject = getPropertyValueObject(node, propertyPrompt.getPropertyName());
         if (!propertyValueObject.isPresent()) {
             return Optional.empty();
@@ -130,6 +131,7 @@ public class AiModelTrainer {
             return Optional.empty();
         }
     }
+
     private boolean isMultiple(Object propertyValue) {
         return propertyValue instanceof List;
     }

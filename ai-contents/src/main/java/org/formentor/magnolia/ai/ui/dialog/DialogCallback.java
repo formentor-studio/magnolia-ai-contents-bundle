@@ -15,8 +15,10 @@ import info.magnolia.ui.dialog.DialogDefinitionRegistry;
 import info.magnolia.ui.dialog.EditorActionBar;
 import info.magnolia.ui.dialog.FormDialogDefinition;
 import info.magnolia.ui.editor.EditorView;
+import info.magnolia.ui.editor.FormDefinition;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.field.LocaleSelector;
+import info.magnolia.ui.field.TextFieldDefinition;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,9 +48,10 @@ public class DialogCallback {
         this.dialogBuilder = dialogBuilder;
     }
 
-    public void open(String dialogId, Callback callback) {
+    public void open(String dialogId, Callback callback, Map<String, String> initialFormValues) {
         FormDialogDefinition formDialogDefinition = (FormDialogDefinition)getDialogDefinition(dialogId);
         EditorView form = (EditorView) parentView.create(formDialogDefinition.getForm());
+        applyInitialValuesToForm(formDialogDefinition.getForm(), initialFormValues);
         form.applyDefaults();
 
         List<ActionExecution> actionExecutions = buildActions(formDialogDefinition, callback, form.getComponentProvider());
@@ -64,6 +67,16 @@ public class DialogCallback {
         CloseHandler closeHandler = getCloseHandler(dialog);
         dialog.addCloseListener((Window.CloseListener) e -> closeHandler.close());
         form.bindInstance(CloseHandler.class, closeHandler);
+    }
+
+    private void applyInitialValuesToForm(FormDefinition form, Map<String, String> initialValues) {
+        initialValues.forEach((key, value) -> {
+            form.getFieldDefinition(key).ifPresent(field -> {
+                if (field instanceof TextFieldDefinition) {
+                    ((TextFieldDefinition) field).setDefaultValue(value);
+                }
+            });
+        });
     }
 
     private DialogDefinition getDialogDefinition(String dialogId) {

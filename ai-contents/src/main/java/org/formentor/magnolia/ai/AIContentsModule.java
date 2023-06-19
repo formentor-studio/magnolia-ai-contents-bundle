@@ -19,8 +19,6 @@ public class AIContentsModule implements info.magnolia.module.ModuleLifecycle{
     private Azure azure;
 
     @Deprecated
-    private String instruction;
-    @Deprecated
     private String workspaceName;
 
     @Override

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Field definition for Image AI.
  */
@@ -14,10 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Slf4j
 public class TextAIFieldDefinition extends TextFieldDefinition {
-    Integer words;
-    String performance;
-    String strategy;
+    private Integer words;
+    private String performance;
+    private String strategy;
+    private String template;
+    private List<TextAIFieldPromptDefinition> prompt = new ArrayList<>();
+
     public TextAIFieldDefinition() {
         setFactoryClass(TextAIFieldFactory.class);
     }
+
 }
