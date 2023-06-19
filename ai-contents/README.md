@@ -1,12 +1,12 @@
 # Magnolia AI Contents
 
-This module of magnolia provides a set of features in [Magnolia CMS](https://www.magnolia-cms.com/) for [prompt engineers](https://en.wikipedia.org/wiki/Prompt_engineering) to create contents using [Large language models](https://en.wikipedia.org/wiki/Large_language_model) like [GPT](https://en.wikipedia.org/wiki/GPT-3) from [Open AI](https://openai.com/).
+This module of [Magnolia CMS](https://www.magnolia-cms.com/) provides a set of features for [prompt engineers](https://en.wikipedia.org/wiki/Prompt_engineering) to create contents using [Large language models](https://en.wikipedia.org/wiki/Large_language_model) like [GPT](https://en.wikipedia.org/wiki/GPT-3) from [Open AI](https://openai.com/).
 
 ## Features
 - Integration with the API of [OpenAI](https://platform.openai.com/docs/api-reference) and [Azure OpenAI](https://azure.microsoft.com/products/cognitive-services/openai-service/)
-- UI field **textFieldAI** to create and edit text contents using AI.
-- Prompt generator from existing contents.
-- UI field **imageAI** to create images using AI.
+- UI field `textFieldAI` to create and edit text contents using AI.
+- Prompt generator to create prompts from existing contents.
+- UI field `imageAI` to create images using AI.
 
 ## Setup
 1. Add maven dependency with the module **ai-contents**
