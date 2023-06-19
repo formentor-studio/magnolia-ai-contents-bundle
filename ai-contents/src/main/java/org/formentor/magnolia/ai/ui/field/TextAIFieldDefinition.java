@@ -14,10 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Slf4j
 public class TextAIFieldDefinition extends TextFieldDefinition {
-    Integer words;
-    String performance;
-    String strategy;
+    private Integer words;
+    private String performance;
+    private String strategy;
+    private PromptGeneratorDefinition promptGenerator;
+
     public TextAIFieldDefinition() {
         setFactoryClass(TextAIFieldFactory.class);
     }
+
 }

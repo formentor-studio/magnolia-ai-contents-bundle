@@ -1,0 +1,42 @@
+!content-type:products
+name: products-app
+icon: icon-content-app
+subApps:
+  detail:
+    label: Product
+    form:
+      properties:
+        overview:
+          $type: textField
+          label: Overview
+          rows: 3
+        materials:
+          label: Materials
+        description:
+          $type: textFieldAI
+          label: Description
+          i18n: true
+          rows: 12
+          words: 600
+          performance: high
+          strategy: completion
+          promptGenerator:
+            template: products-app.ai.prompt.template.description
+            properties:
+              title:
+                name: title
+              overview:
+                name: overview
+              materials:
+                name: materials
+        image:
+          $type: compositeField
+          label: Image
+          itemProvider:
+            $type: jcrChildNodeProvider
+            nodeName: jcr:content
+            nodeType: mgnl:resource
+          properties:
+            image:
+              label: ""
+              $type: imageAI

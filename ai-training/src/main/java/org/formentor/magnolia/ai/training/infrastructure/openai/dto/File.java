@@ -31,6 +31,11 @@ public class File {
     Long created_at;
 
     /**
+     * The update time in epoch seconds.
+     */
+    Long updated_at;
+
+    /**
      * The name of the file.
      */
     String filename;

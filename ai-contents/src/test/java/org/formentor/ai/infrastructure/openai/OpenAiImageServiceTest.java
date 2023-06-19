@@ -61,7 +61,7 @@ public class OpenAiImageServiceTest {
     // TODO make an Object Mother to create mocks of AIContentsModule
     private static AIContentsModule mockAIContentsModule(String host) {
         AIContentsModule aiContentsModule = new AIContentsModule();
-        aiContentsModule.setHost(host);
+        aiContentsModule.getOpenAI().setHost(host);
 
         return aiContentsModule;
     }

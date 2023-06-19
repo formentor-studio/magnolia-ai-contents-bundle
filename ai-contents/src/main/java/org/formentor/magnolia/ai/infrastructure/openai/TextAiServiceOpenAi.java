@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-public class OpenAiTextAiService implements TextAiService {
+public class TextAiServiceOpenAi implements TextAiService {
     private final String DEFAULT_MODEL = "text-ada-001";
     private final String DEFAULT_EDIT_TEXT_MODEL = "text-davinci-edit-001";
 
@@ -34,7 +34,7 @@ public class OpenAiTextAiService implements TextAiService {
     private final OpenAiApi api;
 
     @Inject
-    public OpenAiTextAiService(OpenAiApiClientProvider openAiApiClientProvider) {
+    public TextAiServiceOpenAi(OpenAiApiClientProvider openAiApiClientProvider) {
         api = openAiApiClientProvider.get();
     }
 

@@ -56,6 +56,8 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.Collections.EMPTY_MAP;
+
 @Slf4j
 public class ImageAIField extends CustomField<File> {
     private static final Resource DEFAULT_REVIEW_IMG = MagnoliaIcons.FILE;
@@ -151,7 +153,8 @@ public class ImageAIField extends CustomField<File> {
                         Notification.show("Errors creating AI image: " + e.getMessage(), Notification.Type.ERROR_MESSAGE);
                     }
                     return CompletableFuture.completedFuture("");
-                }
+                },
+                EMPTY_MAP
         ));
 
         return button;

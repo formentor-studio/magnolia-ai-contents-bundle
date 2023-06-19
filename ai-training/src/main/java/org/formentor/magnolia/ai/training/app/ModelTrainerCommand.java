@@ -4,6 +4,7 @@ import info.magnolia.commands.MgnlCommand;
 import info.magnolia.context.Context;
 import lombok.Setter;
 import org.formentor.magnolia.ai.training.application.AiModelTrainer;
+import org.formentor.magnolia.ai.training.domain.PropertyPromptValue;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ModelTrainerCommand extends MgnlCommand {
     String nodeType;
 
     @Setter
-    List<String> propertiesAsPrompt;
+    List<PropertyPromptValue> propertiesAsPrompt;
 
     @Setter
     String propertyAsCompletion;
@@ -34,7 +35,7 @@ public class ModelTrainerCommand extends MgnlCommand {
 
     @Override
     public boolean execute(Context context) throws Exception {
-        modelTrainer.run(modelName, context.getJCRSession(workspace), root, nodeType, propertiesAsPrompt, propertyAsCompletion).join();
+        modelTrainer.run(modelName, context.getJCRSession(workspace), root, nodeType, propertiesAsPrompt , propertyAsCompletion).join();
 
         return true;
     }
