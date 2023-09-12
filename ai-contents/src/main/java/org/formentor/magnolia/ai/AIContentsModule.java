@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class AIContentsModule implements info.magnolia.module.ModuleLifecycle{
+public class AIContentsModule implements info.magnolia.module.ModuleLifecycle {
     /* you can optionally implement info.magnolia.module.ModuleLifecycle */
     private OpenAI openAI;
     private Azure azure;

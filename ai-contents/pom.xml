@@ -40,6 +40,10 @@
       <artifactId>magnolia-ui-framework-jcr</artifactId>
     </dependency>
     <dependency>
+      <groupId>info.magnolia.passwordmanager</groupId>
+      <artifactId>magnolia-module-password-manager</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.machinezoo.noexception</groupId>
       <artifactId>noexception</artifactId>
     </dependency>

@@ -26,6 +26,8 @@ export OPENAI_TOKEN=sk-...84jf
 export AZURE_API_KEY=97...xaa
 ```
 
+In case of using the implementation `AzureApiKeyProviderFromPasswords.java` the Azure api-key must be specified in the password `/azure/api-key`
+
 3. Configure the module in Magnolia
 
 Configuration for [Open AI](https://openai.com/)
@@ -89,7 +91,7 @@ Use {0} to insert the value of the properties and {1} for the language
 ### Field _imageAI_
 Creates image content from a given prompt.
 
-![textFieldAI](_docs/field-imageAI.png)
+![imageAI](_docs/field-imageAI.png)
 
 Definition of field _imageAI_
 

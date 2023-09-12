@@ -65,6 +65,7 @@ public class TextAIField extends CustomField<String> {
 
     private static final String DIALOG_COMPLETE_ID = "ai-contents:CompleteTextDialog";
     private static final String DIALOG_EDIT_ID = "ai-contents:EditTextDialog";
+    private static final int COMPLETION_MAX_WORDS_DEFAULT = 2048;
 
     @Inject
     public TextAIField(AppContext appContext, TranslationService translationService, LocaleContext localeContext, I18nContentSupport i18nContentSupport, AbstractTextField textField, TextAIFieldDefinition definition, DialogDefinitionRegistry dialogDefinitionRegistry, I18nizer i18nizer, DialogBuilder dialogBuilder, TextAiService textAiService, SimpleTranslator i18n, ValueContext<JcrNodeWrapper> valueContext, UIComponent parentView) {
@@ -151,15 +152,16 @@ public class TextAIField extends CustomField<String> {
             // By the moment it is discarded to build the prompt from FormView as it does not support Complex fields like MultiValue - See how works FormView.write(), the property "subEditors" is private :(
             // initialFormValues.put("prompt", derivePromptFromDefinitionAndFormView(definition, getFormFromSubApp(parentView)));
             initialFormValues.put("prompt", derivePromptFromDefinitionAndValueContext(definition, valueContext));
+            initialFormValues.put("words", Optional.ofNullable(definition.getWords()).orElse(COMPLETION_MAX_WORDS_DEFAULT).toString());
 
             dialogCallback.open(
-                DIALOG_COMPLETE_ID,
-                properties -> textAiService.completeText(
-                        properties.get("prompt").toString(),
-                        Optional.ofNullable(Integer.valueOf(properties.get("words").toString())).orElse(words),
-                        properties.containsKey("performance")? getTextPerformance(properties.get("performance").toString()): performance
-                ).thenAccept(textField::setValue),
-                initialFormValues
+                    DIALOG_COMPLETE_ID,
+                    properties -> textAiService.completeText(
+                            properties.get("prompt").toString(),
+                            Optional.ofNullable(Integer.valueOf(properties.get("words").toString())).orElse(words),
+                            properties.containsKey("performance")? getTextPerformance(properties.get("performance").toString()): performance
+                    ).thenAccept(textField::setValue),
+                    initialFormValues
             );}
         );
 
@@ -193,11 +195,11 @@ public class TextAIField extends CustomField<String> {
         String prompt = context.getSingle()
                 .map(I18nNodeWrapper::new)
                 .map(item -> promptGenerator.getProperties()
-                    .stream()
-                    .reduce("", (acc, propertyDefinition) -> {
-                        Optional<String> propertyPromptValue = getPropertyPromptValue(item, propertyDefinition);
-                        return propertyPromptValue.map(propertyValue -> acc.concat(String.format("%s: %s.\n", getPropertyPromptLabel(propertyDefinition.getName()), propertyValue))).orElse(acc);
-                    }, String::concat))
+                        .stream()
+                        .reduce("", (acc, propertyDefinition) -> {
+                            Optional<String> propertyPromptValue = getPropertyPromptValue(item, propertyDefinition);
+                            return propertyPromptValue.map(propertyValue -> acc.concat(String.format("%s: %s.\n", getPropertyPromptLabel(propertyDefinition.getName()), propertyValue))).orElse(acc);
+                        }, String::concat))
                 .orElse("");
 
         if (promptGenerator.getTemplate() != null) {
@@ -317,5 +319,4 @@ public class TextAIField extends CustomField<String> {
     private FormView getFormFromSubApp(UIComponent view) {
         return (FormView)view.accessViewBeanStore().getInstance(EditorView.class).get();
     }
-
 }
