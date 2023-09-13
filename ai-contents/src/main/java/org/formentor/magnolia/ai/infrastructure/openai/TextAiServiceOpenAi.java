@@ -51,7 +51,8 @@ public class TextAiServiceOpenAi implements TextAiService {
                 .build();
 
         return CompletableFuture.supplyAsync(() -> api.createCompletion(request))
-                .thenApply(completionResult -> completionResult.getChoices().get(0).getText());
+                .thenApply(completionResult -> completionResult.getChoices().get(0).getText())
+                .thenApply(completionText -> removeStartingLineFeeds(completionText));
     }
 
     @Override
@@ -67,7 +68,8 @@ public class TextAiServiceOpenAi implements TextAiService {
                 .build();
 
         return CompletableFuture.supplyAsync(() -> api.createEdit(request))
-                .thenApply(completionResult -> completionResult.getChoices().get(0).getText());
+                .thenApply(completionResult -> completionResult.getChoices().get(0).getText())
+                .thenApply(completionText -> removeStartingLineFeeds(completionText));
 
     }
 
@@ -77,5 +79,12 @@ public class TextAiServiceOpenAi implements TextAiService {
             return defaultTextModel;
         }
         return modelMapping.get(performance);
+    }
+
+    private String removeStartingLineFeeds(String text) {
+        int indexStart = 0;
+        for (; indexStart < text.length() && text.charAt(indexStart) == 10 ; indexStart++) {}
+
+        return text.substring(indexStart);
     }
 }
