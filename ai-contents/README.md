@@ -19,14 +19,14 @@ This module of [Magnolia CMS](https://www.magnolia-cms.com/) provides a set of f
     </dependency>
 </dependencies>
 ```
-2. Set the environment variable _OPENAI_TOKEN_ or _AZURE_API_KEY_ with the _secret key_ of [Open AI](https://openai.com/) or _api-key_ of [Azure OpenAI](https://azure.microsoft.com/products/cognitive-services/openai-service/) depending on the implementation.
+2. Set the environment variable _OPENAI_TOKEN_ or _AZURE_API_KEY_ with the _secret key_ of [OpenAI](https://openai.com/) or _api-key_ of [Azure OpenAI](https://azure.microsoft.com/products/cognitive-services/openai-service/) depending on the implementation.
 
 ```bash
 export OPENAI_TOKEN=sk-...84jf
 export AZURE_API_KEY=97...xaa
 ```
 
-In case of using the implementation `AzureApiKeyProviderFromPasswords.java` the Azure api-key must be specified in the password `/azure/api-key`
+In case of storing the _secret key_ or _api-key_ in passwords manager, the OpenAI token must be stored in the path `/openai/token` and Azure api-key in `/azure/api-key`
 
 3. Configure the module in Magnolia
 

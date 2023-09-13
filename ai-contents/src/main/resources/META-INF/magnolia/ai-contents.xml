@@ -17,6 +17,22 @@
       <type>org.formentor.magnolia.ai.domain.ImageAiService</type>
       <implementation>org.formentor.magnolia.ai.infrastructure.openai.OpenAiImageService</implementation>
     </component>
+    <!-- OpenAI implementation -->
+    <component>
+      <type>org.formentor.magnolia.ai.domain.TextAiService</type>
+      <implementation>org.formentor.magnolia.ai.infrastructure.openai.TextAiServiceOpenAi</implementation>
+    </component>
+    <component>
+      <type>org.formentor.magnolia.ai.infrastructure.openai.TokenProvider</type>
+      <implementation>org.formentor.magnolia.ai.infrastructure.openai.TokenProviderPasswordsImpl</implementation>
+      <scope>singleton</scope>
+    </component>
+    <component>
+      <type>org.formentor.magnolia.ai.infrastructure.openai.OpenAiApiClientProvider</type>
+      <implementation>org.formentor.magnolia.ai.infrastructure.openai.OpenAiApiClientProvider</implementation>
+    </component>
+    <!-- Azure implementation -->
+    <!--
     <component>
       <type>org.formentor.magnolia.ai.domain.TextAiService</type>
       <implementation>org.formentor.magnolia.ai.infrastructure.azure.TextAiServiceAzure</implementation>
@@ -29,20 +45,6 @@
     <component>
       <type>org.formentor.magnolia.ai.infrastructure.azure.AzureOpenAiApiClientProvider</type>
       <implementation>org.formentor.magnolia.ai.infrastructure.azure.AzureOpenAiApiClientProvider</implementation>
-    </component>
-    <!--
-    <component>
-      <type>org.formentor.magnolia.ai.domain.TextAiService</type>
-      <implementation>org.formentor.magnolia.ai.infrastructure.openai.TextAiServiceOpenAi</implementation>
-    </component>
-    <component>
-      <type>org.formentor.magnolia.ai.infrastructure.openai.TokenProvider</type>
-      <implementation>org.formentor.magnolia.ai.infrastructure.openai.TokenProvider</implementation>
-      <scope>singleton</scope>
-    </component>
-    <component>
-      <type>org.formentor.magnolia.ai.infrastructure.openai.OpenAiApiClientProvider</type>
-      <implementation>org.formentor.magnolia.ai.infrastructure.openai.OpenAiApiClientProvider</implementation>
     </component>
     -->
   </components>
