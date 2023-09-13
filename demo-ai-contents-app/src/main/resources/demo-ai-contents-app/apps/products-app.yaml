@@ -12,6 +12,18 @@ subApps:
           rows: 3
         materials:
           label: Materials
+          $type: jcrMultiValueField
+          field:
+            $type: linkField
+            label: ""
+            datasource:
+              $type: jcrDatasource
+              includeProperties: true
+              describeByProperty: title
+              workspace: category
+              rootPath: /product-materials
+            sortOptions: true
+
         description:
           $type: textFieldAI
           label: Description
