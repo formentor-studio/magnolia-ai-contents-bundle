@@ -12,12 +12,12 @@
   <packaging>war</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.formentor</groupId>
-      <artifactId>ai-contents</artifactId>
+      <groupId>com.formentor-studio.magnolia</groupId>
+      <artifactId>magnolia-ai-contents</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.formentor</groupId>
-      <artifactId>ai-training</artifactId>
+      <groupId>com.formentor-studio.magnolia</groupId>
+      <artifactId>magnolia-ai-training</artifactId>
     </dependency>
     <dependency>
       <groupId>org.formentor</groupId>
@@ -27,29 +27,6 @@
       <groupId>info.magnolia.demo</groupId>
       <artifactId>magnolia-travel-tours</artifactId>
     </dependency>
-    <!--
-     Add your project specific dependencies here:
-     A custom webapp typically is based on a magnolia webapp. The most simple and reduced bundle to start with is the "magnolia-empty-webapp" (see "option i" below).
-     To see a complete list of preconfigured Magnolia webapps, have a look at https://documentation.magnolia-cms.com/display/DOCS/Bundles+and+webapps
-     => Please just use one of the four below listed options!
-     Make sure to use the appropriate option (A or B) in the parent pom
-    -->
-
-    <!-- option i - magnolia-empty-webapp -->
-    <!-- Dependencies versions are already imported by parent pom. Requires "Option A" in the parent pom. -->
-    <!--
-    <dependency>
-      <groupId>info.magnolia</groupId>
-      <artifactId>magnolia-empty-webapp</artifactId>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>info.magnolia</groupId>
-      <artifactId>magnolia-empty-webapp</artifactId>
-      <type>pom</type>
-    </dependency>
-    -->
-
     <!-- option ii - magnolia-community-webapp -->
     <!-- Dependencies versions are already imported by parent pom. Requires "Option A" in the parent pom. -->
     <dependency>
@@ -62,6 +39,12 @@
       <artifactId>magnolia-community-webapp</artifactId>
       <type>pom</type>
       <exclusions>
+        <!-- Exclude magnolia-module-javascript-models as nashorn is not included in Java 17 -->
+        <exclusion>
+          <groupId>info.magnolia.javascript-models</groupId>
+          <artifactId>magnolia-module-javascript-models</artifactId>
+        </exclusion>
+
         <!--
           magnolia-community-webapp depends on magnolia-module-javascript-models:1.2.0
           which depends on magnolia-external-dependencies:pom:5.7.16
@@ -73,22 +56,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <!-- option iii - magnolia-dx-core-webapp -->
-    <!-- Dependencies versions are already imported by parent pom. Requires "Option B" in the parent pom. -->
-    <!--
-    <dependency>
-      <groupId>info.magnolia.dx</groupId>
-      <artifactId>magnolia-dx-core-webapp</artifactId>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>info.magnolia.dx</groupId>
-      <artifactId>magnolia-dx-core-webapp</artifactId>
-      <type>pom</type>
-    </dependency>
-    -->
-
   </dependencies>
 
   <build>
@@ -96,6 +63,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
         <configuration>
           <!-- exclude jars copied "physically" from the webapp overlay - so we only get those resolved by Maven's dependency management -->
           <dependentWarExcludes>WEB-INF/lib/*.jar</dependentWarExcludes>
